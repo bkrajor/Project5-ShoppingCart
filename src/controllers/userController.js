@@ -81,7 +81,8 @@ const createUser = async (req, res) => {
         if (isPhoneExist) return res.status(400).send({ status: false, message: "Phone number is already exist" })
 
         const files = req.files
-        if (!files && files.length == 0) return res.status(400).send({ status: false, message: "Please provide profile picture" })
+
+        if (!(files && files.length > 0)) return res.status(400).send({ status: false, message: "Please provide profile picture" })
         let profilePicUrl = await uploadFile(files[0])
 
         data.profileImage = profilePicUrl
