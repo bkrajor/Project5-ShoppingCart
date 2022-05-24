@@ -2,7 +2,6 @@ const userModel = require('../models/userModel')
 const jwt = require('jsonwebtoken')
 const aws = require('aws-sdk')
 const bcrypt = require('bcrypt')
-const saltRounds = 10
 const {
     isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode
 } = require('../validator/validator')
@@ -86,9 +85,8 @@ const createUser = async (req, res) => {
         if (!(files && files.length > 0)) return res.status(400).send({ status: false, message: "Please provide profile picture" })
         let profilePicUrl = await uploadFile(files[0])
 
-        const encryptedPassword = bcrypt.hashSync(password, saltRounds)
+        data.password = bcrypt.hashSync(password, 10)
 
-        data.password = encryptedPassword
         data.profileImage = profilePicUrl
         const userData = await userModel.create(data)
 
