@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
         type: String, required: true, unique: true, trim: true
     },
     password: {
-        type: String, required: true, unique: true, minlength: 8, maxlength: 15, trim: true
+        type: String, required: true, unique: true, trim: true
     },
     address: {
         shipping: {
