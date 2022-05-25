@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt')
 const {
     isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode
 } = require('../validator/validator')
+const { add } = require('nodemon/lib/rules')
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -170,7 +171,7 @@ const updateUser = async (req, res) => {
         if (password)
             if (!isValidPassword(password)) return res.status(400).send({ status: false, message: "password is invalid" })
 
-        if (address != 'undefined') {
+        if (address) {
             if (!isValid(address)) return res.status(400).send({ status: false, message: "address is invalid" })
             if (shipping) {
                 if (!isValid(shipping)) return res.status(400).send({ status: false, message: "shipping address is invalid" })
