@@ -139,8 +139,8 @@ const getUser = async (req, res) => {
         if (!findProfile) return res.status(400).send({ status: false, message: "No user exist" })
 
         return res.status(200).send({ status: true, message: "Profile found successfully.", data: findProfile })
-    }
-    catch (err) {
+
+    } catch (err) {
         return res.status(500).send({ status: false, Error: err.message })
     }
 }
@@ -149,66 +149,44 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        let userId = req.params.userId
-        if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "UserId is invalid" })
-
-        let findProfile = await userModel.findById(userId)
-        if (!findProfile) return res.status(400).send({ status: false, message: "No user exist" })
-
         let data = req.body
         if (!isValidBody(data)) return res.status(400).send({ status: false, message: "Please provide something to update" })
+
         const { fname, lname, email, phone, password, address } = data
+        // const { shipping, billing } = address
 
-        if (fname != undefined)
+        if (fname)
             if (!isValidName(fname)) return res.status(400).send({ status: false, message: "first name is invalid" })
-
-        if (lname != undefined)
+        if (lname)
             if (!isValidName(lname)) return res.status(400).send({ status: false, message: "last name is invalid" })
-
-        if (email != undefined)
+        if (email)
             if (!isValidEmail(email)) return res.status(400).send({ status: false, message: "email is invalid" })
-
-        if (phone != undefined)
+        if (phone)
             if (!isValidPhone(phone)) return res.status(400).send({ status: false, message: "phone is invalid" })
-
-        if (password != undefined)
+        if (password)
             if (!isValidPassword(password)) return res.status(400).send({ status: false, message: "password is invalid" })
 
-<<<<<<< HEAD
         if (address) {
             if (!isValid(address)) return res.status(400).send({ status: false, message: "address is invalid" })
             if (shipping) {
-=======
-
-        if (address != undefined) {
-            if (!isValid(address)) return res.status(400).send({ status: false, message: "Please provide shipping or billing address" })
-
-            let { shipping, billing } = address
-
-            if (shipping != undefined) {
->>>>>>> b3d045c203e471706076d0d9a0fbff0ecc4ef7e4
                 if (!isValid(shipping)) return res.status(400).send({ status: false, message: "shipping address is invalid" })
-
-                if (shipping.street != undefined) 
-                    if (!isValid(shipping.street)) return res.status(400).send({ status: false, message: "Shipping Street is invalid" })
-                if (shipping.city != undefined)
-                    if (!isValidName(shipping.city)) return res.status(400).send({ status: false, message: "Shipping City is invalid" })
-                if (shipping.pincode != undefined)
-                    if (!isValidPincode(shipping.pincode)) return res.status(400).send({ status: false, message: "Shipping pincode is inavalid" })
+                if (shipping.street)
+                    if (!isValid(shipping.street)) return res.status(400).send({ status: false, message: "street is invalid" })
+                if (shipping.city)
+                    if (!isValidName(shipping.city)) return res.status(400).send({ status: false, message: "city is invalid" })
+                if (shipping.pincode)
+                    if (!isValidPincode(shipping.pincode)) return res.status(400).send({ status: false, message: "pincode is invalid" })
             }
-            if (billing != undefined) {
-                if (!isValid(billing)) return res.status(400).send({ status: false, message: "billing address is invalid" })
-
-                if (billing.street != undefined) 
-                    if (!isValid(billing.street)) return res.status(400).send({ status: false, message: "billing Street is invalid" })
-                if (billing.city != undefined)
-                    if (!isValidName(billing.city)) return res.status(400).send({ status: false, message: "billing City is invalid" })
-                if (billing.pincode != undefined)
-                    if (!isValidPincode(billing.pincode)) return res.status(400).send({ status: false, message: "billing pincode is inavalid" })
+            if (billing) {
+                if (!isValid(billing)) return res.status(400).send({ status: false, message: "shipping address is invalid" })
+                if (billing.street)
+                    if (!isValid(billing.street)) return res.status(400).send({ status: false, message: "street is invalid" })
+                if (billing.city)
+                    if (!isValidName(billing.city)) return res.status(400).send({ status: false, message: "city is invalid" })
+                if (billing.pincode)
+                    if (!isValidPincode(billing.pincode)) return res.status(400).send({ status: false, message: "pincode is invalid" })
             }
         }
-        
-
 
         const isEmailExist = await userModel.findOne({ email })
         if (isEmailExist) return res.status(400).send({ status: false, message: "Email is already exist" })
