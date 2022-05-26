@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const userModel = require('../models/userModel')
 
-//------------------------------------Authentication--------------------------------------------------//
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 const authentication = async function (req, res, next) {
     try {
@@ -14,6 +14,7 @@ const authentication = async function (req, res, next) {
         let decodedToken = jwt.verify(finalToken, "Uranium Project-5")
         if (!decodedToken)
             return res.status(401).send({ status: false, msg: "please enter the right token" })
+
         req.userId = decodedToken.userId
         next()
     }
@@ -22,7 +23,7 @@ const authentication = async function (req, res, next) {
     }
 }
 
-// --------------------------------------Authorization------------------------------------------------------ //
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
 
 const authorization = async function (req, res, next) {
     try {
@@ -35,14 +36,13 @@ const authorization = async function (req, res, next) {
 
         if (req.userId !== userId)
             return res.status(403).send({ status: false, message: "unauthorized access" })
-
         next()
     }
     catch (error) {
         return res.status(500).send({ status: false, msg: error.message })
-
     }
 }
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 module.exports = { authentication, authorization }

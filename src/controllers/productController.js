@@ -1,36 +1,11 @@
 const productModel = require('../models/productModel')
-const aws = require('aws-sdk')
+const {uploadFile} = require('../aws/aws')
 const {
     isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode, isValidAvailableSizes, isValidPrice
 } = require('../validator/validator')
 const { is } = require('express/lib/request')
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-aws.config.update({
-    accessKeyId: "AKIAY3L35MCRUJ6WPO6J",
-    secretAccessKey: "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",
-    region: "ap-south-1"
-})
-
-let uploadFile = async (file) => {
-    return new Promise(function (resolve, reject) {
-        let s3 = new aws.S3({ apiVersion: '2006-03-01' })
-
-        var uploadParams = {
-            ACL: "public-read",
-            Bucket: "classroom-training-bucket",
-            Key: "bharat/" + file.originalname,
-            Body: file.buffer
-        }
-        s3.upload(uploadParams, function (err, data) {
-            if (err) return reject({ "error": err })
-            return resolve(data.Location)
-        })
-    })
-}
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 const createProduct = async (req, res) => {
     try {
@@ -50,8 +25,8 @@ const createProduct = async (req, res) => {
         if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "price is invalid" })
 
         let sizeArray = availableSizes.split(",")
-        console.log(sizeArray);
-        console.log(typeof sizeArray);
+        console.log(sizeArray)
+        console.log(typeof sizeArray)
         if (!isValidAvailableSizes(availableSizes)) return res.status(400).send({ status: false, message: `Size should be among ${["S", "XS","M","X", "L","XXL", "XL"]}` })
 
         const isTitleExist = await productModel.findOne({ title })
@@ -74,13 +49,15 @@ const createProduct = async (req, res) => {
     }
 }
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 const getProductByQuery = async (req, res) => {
     try{
         const filterQuery = { isDeleted: false }
-        const queryParams = req.query
+        const data = req.query
     
-        let { size, name, priceGreaterThan, priceLessThan, priceSort } = queryParams
-        console.log(queryParams);
+        let { size, name, priceGreaterThan, priceLessThan, priceSort } = data
+        console.log(data)
     
         if (size) {
             if (!isValidAvailableSizes(size)) return res.status(400).send({ status: false, message: `Size should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"]}` })
@@ -93,17 +70,17 @@ const getProductByQuery = async (req, res) => {
         }
     
         if (priceGreaterThan && priceLessThan) {
-            console.log("both given");
+            console.log("both given")
             filterQuery['price'] = { $gte: priceGreaterThan, $lte: priceLessThan }
         }
     
         if (priceGreaterThan) {
-            console.log("only 1 given");
+            console.log("only 1 given")
             filterQuery['price'] = { $gte: priceGreaterThan }
         }
     
         if (priceLessThan) {
-            console.log("only 2 given");
+            console.log("only 2 given")
             filterQuery['price'] = { $lte: priceLessThan }
         }
     
@@ -129,6 +106,8 @@ const getProductByQuery = async (req, res) => {
     }
 }
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 const getProductById = async (req, res) => {
     try {
         let productId = req.params.productId
@@ -138,11 +117,13 @@ const getProductById = async (req, res) => {
         if (!findProduct) return res.status(400).send({ status: false, message: "No product exist" })
 
         return res.status(200).send({ status: true, message: "Success", data: findProduct })
-
-    } catch (err) {
+    } 
+    catch (err) {
         return res.status(500).send({ status: false, Error: err.message })
     }
 }
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 const updateProduct = async (req, res) => {
     try {
@@ -179,29 +160,32 @@ const updateProduct = async (req, res) => {
         const updatedProduct= await productModel.findByIdAndUpdate(ProductId, data, { new: true })
 
         return res.status(200).send({ status: true, message: "Product profile updated", data: updatedProduct })
-
     }
     catch (err) {
         return res.status(500).send({ Error: err.message })
     }
 }
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 const deleteProduct = async (req, res) => {
     try {
-        let ProductId = req.params.productId;
+        let ProductId = req.params.productId
         if (!isValidObjectId(ProductId)) {
             return res.status(400).send({ status: false, message: "productId is  Invalid" })
         }
-        let data = await productModel.findOne({ _id: params, isDeleted: false });
+        let data = await productModel.findOne({ _id: params, isDeleted: false })
         if (!data) {
-            return res.status(404).send({ status: false, message: "This Product Data is already deleted Or Doesn't Exist" });
+            return res.status(404).send({ status: false, message: "This Product Data is already deleted Or Doesn't Exist" })
         }
-        let deleteproduct = await productModel.findOneAndUpdate({ _id: params }, { isDeleted: true, deletedAt: Date() }, { new: true });
-        return res.status(200).send({ status: true, message: 'Success', data: deleteproduct });
+        let deleteproduct = await productModel.findOneAndUpdate({ _id: params }, { isDeleted: true, deletedAt: Date() }, { new: true })
+        return res.status(200).send({ status: true, message: 'Success', data: deleteproduct })
 
     } catch (err) {
-        return res.status(500).send({ message: err.message });
+        return res.status(500).send({ message: err.message })
     }
 }
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 module.exports = { createProduct, getProductByQuery, getProductById, updateProduct, deleteProduct }
