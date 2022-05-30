@@ -66,7 +66,7 @@ const createUser = async (req, res) => {
         let profileImageUrl = await uploadFile(files[0])
 
         // -------ASSIGNING encrypted password & profileImageUrl to data object-----------
-        data.password = bcrypt.hash(password, 10)
+        data.password = bcrypt.hashSync(password, 10)
         data.profileImage = profileImageUrl
 
         const userData = await userModel.create(data)

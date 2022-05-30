@@ -42,6 +42,12 @@ const isValidPrice = (price) => {
     return /^\d{0,8}[.]?\d{1,4}$/.test(price)
 }
 
+const isValidQuantity = function isInteger(value) {
+    if (value < 1) return false
+    if (isNaN(Number(value))) return false
+    if (value % 1 == 0) return true
+}
+
 module.exports = { 
-    isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode, isValidAvailableSizes, isValidPrice
+    isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode, isValidAvailableSizes, isValidPrice, isValidQuantity
 }
