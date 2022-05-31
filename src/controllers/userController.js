@@ -133,6 +133,7 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         let data = req.body
+        const userId = req.params.userId
         if (!isValidBody(data)) return res.status(400).send({ status: false, message: "Please provide something to update" })
 
         // ---------------DESTRUCTURING bodyData---------------------
