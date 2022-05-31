@@ -127,13 +127,13 @@ const getProductById = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-        let ProductId = req.params.ProductId
-        if (!isValidObjectId(ProductId)) return res.status(400).send({ status: false, message: "ProductId is invalid" })
+        let productId = req.params.productId
+        if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "productId is invalid" })
 
         let data = req.body
         if (!isValidBody(data)) return res.status(400).send({ status: false, message: "Please provide something to update" })
 
-        let findProduct= await productModel.findOne({_id: ProductId, isDeleted: true})
+        let findProduct= await productModel.findOne({_id: productId, isDeleted: false})
         if (!findProduct) return res.status(404).send({ status: false, message: "No Product exist" })
 
         const { title, description, price, availableSizes } = data
@@ -157,7 +157,7 @@ const updateProduct = async (req, res) => {
             data.profileImage = profilePicUrl
         }
 
-        const updatedProduct= await productModel.findByIdAndUpdate(ProductId, data, { new: true })
+        const updatedProduct= await productModel.findByIdAndUpdate(productId, data, { new: true })
 
         return res.status(200).send({ status: true, message: "Product profile updated", data: updatedProduct })
     }
@@ -170,15 +170,15 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
     try {
-        let ProductId = req.params.productId
-        if (!isValidObjectId(ProductId)) {
+        let productId = req.params.productId
+        if (!isValidObjectId(productId)) {
             return res.status(400).send({ status: false, message: "productId is  Invalid" })
         }
-        let data = await productModel.findOne({ _id: params, isDeleted: false })
+        let data = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!data) {
             return res.status(404).send({ status: false, message: "This Product Data is already deleted Or Doesn't Exist" })
         }
-        let deleteproduct = await productModel.findOneAndUpdate({ _id: params }, { isDeleted: true, deletedAt: Date() }, { new: true })
+        let deleteproduct = await productModel.findOneAndUpdate({ _id: productId }, { isDeleted: true, deletedAt: Date() }, { new: true })
         return res.status(200).send({ status: true, message: 'Success', data: deleteproduct })
 
     } catch (err) {
