@@ -6,14 +6,14 @@ const {
  isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode
 } = require('../util/validator')
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// ******************************************************CREATE USER************************************************************
 
 const createUser = async (req, res) => {
     try {
         let data = req.body
         if (!isValidBody(data)) return res.status(400).send({ status: false, message: "Invalid Parameters" })
 
-        // ---------------DESTRUCTURING bodyData---------------------
+        // ---------------DESTRUCTURING requestBody---------------------
         const { fname, lname, email, phone, password, address } = data
         const { shipping, billing } = address
 
@@ -60,7 +60,7 @@ const createUser = async (req, res) => {
         const isPhoneExist = await userModel.findOne({ phone })
         if (isPhoneExist) return res.status(400).send({ status: false, message: "Phone number is already exist" })
 
-        // --------VALIDATING file from body-----------
+        // --------VALIDATING file from requestbody-----------
         let files = req.files
         if (!(files && files.length > 0)) return res.status(400).send({ status: false, message: "Please provide profile picture" })
         let profileImageUrl = await uploadFile(files[0])
@@ -78,7 +78,7 @@ const createUser = async (req, res) => {
     }
 }
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// ******************************************************USER LOGIN************************************************************
 
 const userlogin = async (req, res) => {
     try {
@@ -111,7 +111,7 @@ const userlogin = async (req, res) => {
     }
 }
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// ******************************************************GET USER************************************************************
 
 const getUser = async (req, res) => {
     try {
@@ -128,7 +128,7 @@ const getUser = async (req, res) => {
     }
 }
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// ******************************************************UPDATE USER************************************************************
 
 const updateUser = async (req, res) => {
     try {
@@ -136,7 +136,7 @@ const updateUser = async (req, res) => {
         const userId = req.params.userId
         if (!isValidBody(data)) return res.status(400).send({ status: false, message: "Please provide something to update" })
 
-        // ---------------DESTRUCTURING bodyData---------------------
+        // ---------------DESTRUCTURING requestBody---------------------
         const { fname, lname, email, phone, password, address } = data
 
         // ------------CHECKING and VALIDATING every key to update the data------------
@@ -182,7 +182,7 @@ const updateUser = async (req, res) => {
         const isPhoneExist = await userModel.findOne({ phone })
         if (isPhoneExist) return res.status(400).send({ status: false, message: "Phone number is already exist" })
 
-        // --------CHECKING file from body-----------
+        // --------CHECKING and VALIDATING file from requestbody-----------
         const files = req.files
         if (files && files.length > 0) {
             let profilePicUrl = await uploadFile(files[0])

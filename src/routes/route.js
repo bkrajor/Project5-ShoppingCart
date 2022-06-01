@@ -5,32 +5,28 @@ const productController = require('../controllers/productController')
 const cartController = require('../controllers/cartController')
 const { authentication, authorization } = require('../util/auth')
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// *********************************USER's APIs*********************************************
 
-// ----------------User's APIs---------------
 route.post('/register', userController.createUser)
 route.post('/login', userController.userlogin)
 route.get('/user/:userId/profile', authentication, userController.getUser)
 route.put('/user/:userId/profile', authentication, authorization, userController.updateUser)
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// *******************************PRODUCT's APIs********************************************
 
-// ----------------Product's APIs-------------------
 route.post('/products', productController.createProduct)
 route.get('/products', productController.getProductByQuery)
 route.get('/products/:productId', productController.getProductById)
 route.put('/products/:productId', productController.updateProduct)
 route.delete('/products/:productId', productController.deleteProduct)
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// *********************************CART's APIs**********************************************
 
-// ----------------Cart's APIs-------------------
 route.post('/users/:userId/cart',  cartController.createCart)
 route.put('/users/:userId/cart', cartController.updateCart)
 route.get('/users/:userId/cart',  cartController.getCart)
 route.delete('/users/:userId/cart', cartController.deleteCart)
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
 module.exports = route

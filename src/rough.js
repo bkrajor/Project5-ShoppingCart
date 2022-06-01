@@ -52,3 +52,12 @@
 //     }
 // }
 
+const arr = [0, 1, 2, 3, 4]
+// for(let i=0;i<arr.length;i++){   
+//     arr[i]= arr[i]+1
+// }
+// console.log(arr)
+
+const arr1 = arr.map(i => i * 2)   // [0,1,2,3,4].map([1,2,3,4,5], i=>i+1)
+console.log(arr1)
+console.log(arr)
