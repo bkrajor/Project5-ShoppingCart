@@ -1,39 +1,22 @@
 const cartModel = require("../models/cartModel")
 const userModel = require("../models/userModel")
 const orderModel = require("../models/orderModel")
-const validate = require('../validators/validator');
-
+const validate = require('../util/validator')
 
 
 const createOrder = async (req, res)=>{
     try {
         const userId = req.params.userId
-        let tokenId = req.userId
-        let Body = req.body
-
-        if (!(validate.isValidObjectId(userId))) {
-            return res.status(400).send({ status: false, message: "userId is not valid" });;
-        }
-        if (!(validate.isValidObjectId(tokenId))) {
-            return res.status(400).send({ status: false, message: "Token is not valid" });;
-        }
-
-        const user = await userModel.findOne({ _id: userId })
-        if (!user) {
-           return res.status(400).send({ status: false, msg: "User not found" })
-        }
-        if (!(userId == tokenId)) {
-            return res.status(401).send({ status: false, message: "You Are Not Authorized To Perform This Task" });
-        }
-        if (!validate.isValidRequestBody(Body)) {
+        let data = req.body
+      
+        if (!validate.isValidBody(data)) {
             return res.status(400).send({ status: false, message: "Please provide The Body" });
         }
-        let { cartId, cancellable, status } = Body
+        let { items, totalPrice, totalQuantity, status } = data
+        if (!cartId) return res.status(400).send({ status: false, message: "cartId is required" })
+        if (!status) return res.status(400).send({ status: false, message: "status is required" })
         if (!(validate.isValidObjectId(cartId))) {
             return res.status(400).send({ status: false, message: "cartId is not valid" });;
-        }
-        if (!validate.isValid(cartId)) {
-            return res.status(400).send({ status: false, message: "Please provide The cartId" });
         }
         if (!validate.isValid(status)) {
             return res.status(400).send({ status: false, message: "Please provide The status" });
@@ -41,7 +24,6 @@ const createOrder = async (req, res)=>{
         if (!validate.isValidStatus(status)) {
             return res.status(400).send({ status: false, message: "Status should be among 'pending', 'cancelled', 'completed' " });
         }
-
         const cartDetails = await cartModel.findOne({ _id: cartId })
         if (!(cartDetails.userId == userId)) {
             return res.status(400).send({ status: false, message: "This Cart does not belong to You" });

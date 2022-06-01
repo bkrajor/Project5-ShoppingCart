@@ -48,7 +48,11 @@ const isValidQuantity = function isInteger(value) {
     if (value % 1 == 0) return true
 }
 
+const isValidStatus = function(status) {
+    return ['pending', 'cancelled', 'completed'].indexOf(status) !== -1
+}
+
 module.exports = { 
     isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, 
-    isValidPincode, isValidAvailableSizes, isValidPrice, isValidQuantity
+    isValidPincode, isValidAvailableSizes, isValidPrice, isValidQuantity, isValidStatus
 }

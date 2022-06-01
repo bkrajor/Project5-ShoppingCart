@@ -3,6 +3,7 @@ const route = express.Router()
 const userController = require('../controllers/userController')
 const productController = require('../controllers/productController')
 const cartController = require('../controllers/cartController')
+const orderController = require('../controllers/orderController')
 const { authentication, authorization } = require('../util/auth')
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -32,5 +33,8 @@ route.delete('/users/:userId/cart', cartController.deleteCart)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// ----------------Order's APIs-------------------
+route.post('/users/:userId/orders', orderController.createOrder)
+route.put('/users/:userId/orders ', orderController.updateOrder)
 
 module.exports = route
