@@ -12,14 +12,10 @@ const createOrder = async (req, res)=>{
         if (!validate.isValidBody(data)) {
             return res.status(400).send({ status: false, message: "Please provide The Body" });
         }
-        let { items, totalPrice, totalQuantity, status } = data
-        if (!cartId) return res.status(400).send({ status: false, message: "cartId is required" })
-        if (!status) return res.status(400).send({ status: false, message: "status is required" })
+        const { cartId, cancellable, status } = data;
+      
         if (!(validate.isValidObjectId(cartId))) {
             return res.status(400).send({ status: false, message: "cartId is not valid" });;
-        }
-        if (!validate.isValid(status)) {
-            return res.status(400).send({ status: false, message: "Please provide The status" });
         }
         if (!validate.isValidStatus(status)) {
             return res.status(400).send({ status: false, message: "Status should be among 'pending', 'cancelled', 'completed' " });
