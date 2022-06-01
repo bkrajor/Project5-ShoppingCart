@@ -1,10 +1,10 @@
 const userModel = require('../models/userModel')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const { uploadFile } = require('../aws/aws')
+const { uploadFile } = require('../util/aws')
 const {
  isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode
-} = require('../validator/validator')
+} = require('../util/validator')
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

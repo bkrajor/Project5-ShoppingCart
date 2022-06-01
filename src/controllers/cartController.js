@@ -2,10 +2,10 @@ const cartModel = require('../models/cartModel')
 const productModel = require('../models/productModel')
 const userModel = require('../models/userModel')
 const {
-    isValid, isValidBody, isValidObjectId, isValidPrice, isValidQuantity
-} = require('../validator/validator')
+    isValid, isValidBody, isValidObjectId, isValidQuantity
+} = require('../util/validator')
 
-//*************************************************************CREATE PRODUCT********************************************************************************** */
+// ***************************************************CREATE CART****************************************************** 
 
 const createCart = async function (req, res) {
     try {
@@ -54,7 +54,7 @@ const createCart = async function (req, res) {
     }
 }
 
-//***************************************************UPDATE CART****************************************************************** */
+// ***************************************************UPDATE CART******************************************************************
 
 const updateCart = async function (req, res) {
     try {
@@ -71,6 +71,7 @@ const updateCart = async function (req, res) {
 
         const findCart = await cartModel.findOne({ userId: userId })
         if (!findCart) return res.status(404).send({ status: false, messsage: "Cart not found" })
+
         const findProduct = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!findProduct) return res.status(404).send({ status: false, message: "product details not found or may be deleted" })
         let reducePrice = findProduct.price
@@ -91,7 +92,7 @@ const updateCart = async function (req, res) {
     }
 }
 
-//*******************************************GET CART*********************************************************** */
+// *******************************************************GET CART***********************************************************
 
 const getCart = async function (req, res) {
     try {
@@ -110,7 +111,7 @@ const getCart = async function (req, res) {
     }
 }
 
-//**********************************************DELETE CART************************************************************** */
+// **********************************************DELETE CART**************************************************************
 
 const deleteCart = async function (req, res) {
     try {

@@ -3,7 +3,7 @@ const route = express.Router()
 const userController = require('../controllers/userController')
 const productController = require('../controllers/productController')
 const cartController = require('../controllers/cartController')
-const { authentication, authorization } = require('../middleware/auth')
+const { authentication, authorization } = require('../util/auth')
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

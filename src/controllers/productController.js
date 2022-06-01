@@ -1,9 +1,8 @@
 const productModel = require('../models/productModel')
-const {uploadFile} = require('../aws/aws')
+const { uploadFile } = require('../util/aws')
 const {
-    isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode, isValidAvailableSizes, isValidPrice
-} = require('../validator/validator')
-const { is } = require('express/lib/request')
+    isValid, isValidBody, isValidObjectId, isValidName, isValidAvailableSizes, isValidPrice
+} = require('../util/validator')
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -25,9 +24,8 @@ const createProduct = async (req, res) => {
         if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "price is invalid" })
 
         let sizeArray = availableSizes.split(",")
-        console.log(sizeArray)
-        console.log(typeof sizeArray)
-        if (!isValidAvailableSizes(availableSizes)) return res.status(400).send({ status: false, message: `Size should be among ${["S", "XS","M","X", "L","XXL", "XL"]}` })
+
+        if (!isValidAvailableSizes(availableSizes)) return res.status(400).send({ status: false, message: `Size should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"]}` })
 
         const isTitleExist = await productModel.findOne({ title })
         if (isTitleExist) return res.status(400).send({ status: false, message: "Title is already exist" })
@@ -52,52 +50,50 @@ const createProduct = async (req, res) => {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 const getProductByQuery = async (req, res) => {
-    try{
-        const filterQuery = { isDeleted: false }
+    try {
+        const filterQuery = { isDeleted: false}
         const data = req.query
-    
+
         let { size, name, priceGreaterThan, priceLessThan, priceSort } = data
-        console.log(data)
-    
+
         if (size) {
             if (!isValidAvailableSizes(size)) return res.status(400).send({ status: false, message: `Size should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"]}` })
             filterQuery['availableSizes'] = size
+            
         }
-    
         if (name) {
             if (!isValidName(name)) return res.status(400).send({ status: false, message: 'name is invalid' })
             filterQuery['title'] = name
         }
-    
         if (priceGreaterThan && priceLessThan) {
-            console.log("both given")
+            if (!(isValidPrice(priceGreaterThan) || isValidPrice(priceLessThan))) return res.status(400).send({ status: false, message: "Price must be a valid number" })
             filterQuery['price'] = { $gte: priceGreaterThan, $lte: priceLessThan }
         }
-    
-        if (priceGreaterThan) {
-            console.log("only 1 given")
-            filterQuery['price'] = { $gte: priceGreaterThan }
+        else if (priceGreaterThan) {
+            if (!isValidPrice(priceGreaterThan)) return res.status(400).send({ status: false, message: "Price must be a valid number" })
+            filterQuery['price'] = { $gte: priceGreaterThan }   //100
         }
-    
-        if (priceLessThan) {
-            console.log("only 2 given")
+        else if (priceLessThan) {
+            if (!isValidPrice(priceLessThan)) return res.status(400).send({ status: false, message: "Price must be a valid number" })
             filterQuery['price'] = { $lte: priceLessThan }
         }
-    
         if (priceSort) {
+            if (priceSort != 1 && priceSort != -1)
+                return res.status(400).send({ status: false, message: "Please provide only 1 for ascending or -1 for descending" })
             if (priceSort == 1) {
                 const products = await productModel.find(filterQuery).sort({ price: 1 })
-                if (!isValidBody(products)) return res.status(404).send({ status: false, message: 'No products found' })
+                if (products.length == 0) return res.status(404).send({ status: false, message: 'No products found' })
                 return res.status(200).send({ status: true, message: 'Success', data: products })
             }
             if (priceSort == -1) {
                 const products = await productModel.find(filterQuery).sort({ price: -1 })
-                if (!isValidBody(products)) return res.status(404).send({ status: false, message: 'No products found' })
+                if (!products.length) return res.status(404).send({ status: false, message: 'No products found' })
                 return res.status(200).send({ status: true, message: 'Success', data: products })
             }
+
         }
-    
-        const products = await productModel.find(filterQuery)
+
+        const products = await productModel.find(filterQuery) 
         if (!isValidBody(products)) return res.status(404).send({ status: false, message: 'No products found' })
         return res.status(200).send({ status: true, message: "Success", data: products })
     }
@@ -113,11 +109,11 @@ const getProductById = async (req, res) => {
         let productId = req.params.productId
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "productId is invalid" })
 
-        let findProduct = await productModel.findOne({_id: productId, isDeleted: false})
+        let findProduct = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!findProduct) return res.status(400).send({ status: false, message: "No product exist" })
 
         return res.status(200).send({ status: true, message: "Success", data: findProduct })
-    } 
+    }
     catch (err) {
         return res.status(500).send({ status: false, Error: err.message })
     }
@@ -133,23 +129,23 @@ const updateProduct = async (req, res) => {
         let data = req.body
         if (!isValidBody(data)) return res.status(400).send({ status: false, message: "Please provide something to update" })
 
-        let findProduct= await productModel.findOne({_id: productId, isDeleted: false})
+        let findProduct = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!findProduct) return res.status(404).send({ status: false, message: "No Product exist" })
 
         const { title, description, price, availableSizes } = data
 
-        if(title)
+        if (title)
             if (!isValidName(title)) return res.status(400).send({ status: false, message: "title is invalid" })
-        if(description)
+        if (description)
             if (!isValid(description)) return res.status(400).send({ status: false, message: "description is invalid" })
-        if(price)
+        if (price)
             if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "price is invalid" })
-        if(availableSizes)
+        if (availableSizes)
             if (!isValidAvailableSizes(availableSizes)) return res.status(400).send({ status: false, message: `Size should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"]}` })
 
         const isTitleExist = await productModel.findOne({ title })
         if (isTitleExist) return res.status(400).send({ status: false, message: "Title is already exist" })
-        
+
         const files = req.files
 
         if (files && files.length > 0) {
@@ -157,7 +153,7 @@ const updateProduct = async (req, res) => {
             data.profileImage = profilePicUrl
         }
 
-        const updatedProduct= await productModel.findByIdAndUpdate(productId, data, { new: true })
+        const updatedProduct = await productModel.findByIdAndUpdate(productId, data, { new: true })
 
         return res.status(200).send({ status: true, message: "Product profile updated", data: updatedProduct })
     }
@@ -180,8 +176,8 @@ const deleteProduct = async (req, res) => {
         }
         let deleteproduct = await productModel.findOneAndUpdate({ _id: productId }, { isDeleted: true, deletedAt: Date() }, { new: true })
         return res.status(200).send({ status: true, message: 'Success', data: deleteproduct })
-
-    } catch (err) {
+    }
+    catch (err) {
         return res.status(500).send({ message: err.message })
     }
 }
