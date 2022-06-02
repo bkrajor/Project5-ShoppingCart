@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const userModel = require('../models/userModel')
-const { isValidObjectId, isValid } = require('../util/validator')
+const { isValidObjectId } = require('../util/validator')
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

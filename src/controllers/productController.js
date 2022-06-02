@@ -1,8 +1,6 @@
 const productModel = require('../models/productModel')
 const { uploadFile } = require('../util/aws')
-const {
-    isValid, isValidBody, isValidObjectId, isValidName, isValidAvailableSizes, isValidPrice
-} = require('../util/validator')
+const { isValid, isValidBody, isValidObjectId, isValidName, isValidSize, isValidPrice } = require('../util/validator')
 
 // *********************************************CREATE PRODUCT*******************************************************
 
@@ -21,10 +19,10 @@ const createProduct = async (req, res) => {
         if (!isValid(description)) return res.status(400).send({ status: false, message: "description is required" })
         if (!isValid(price)) return res.status(400).send({ status: false, message: "price is required" })
         if (!isValid(availableSizes)) return res.status(400).send({ status: false, message: "size is required at least one size should be given" })
-        
+
         if (!isValidName(title)) return res.status(400).send({ status: false, message: "title is invalid" })
         if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "price is invalid" })
-        
+
         if (style)
             if (!isValid(style)) return res.status(400).send({ status: false, message: "style is invalid" })
         if (installments)
@@ -33,7 +31,10 @@ const createProduct = async (req, res) => {
             if (typeof isFreeShipping != "boolean") return res.status(400).send({ status: false, message: "isFreeShipping should be true or false only" })
         // ------------------------VALIDATION ends here-------------------------
 
-        if (!isValidAvailableSizes(availableSizes)) return res.status(400).send({ status: false, message: `Size should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"]}` })
+        if (!availableSizes) return res.status(400).send({ status: false, message: "availableSizes is mandatory" })
+        availableSizes = availableSizes.split(",").map(x => x.trim())
+        if (availableSizes.map(x => isValidSize(x)).filter(x => x === false).length !== 0) return res.status(400).send({ status: false, message: "Size Should be Among  S,XS,M,X,L,XXL,XL" })
+        requestBody.availableSizes = availableSizes
 
         // -------------------CHECKING uniqueness of title-----------------------
         const isTitleExist = await productModel.findOne({ title })
@@ -145,7 +146,7 @@ const updateProduct = async (req, res) => {
         if (!findProduct) return res.status(404).send({ status: false, message: "No Product exist" })
 
         // ---------------DESTRUCTURING requestBody---------------------
-        const { title, description, price, availableSizes } = data
+        const { title, description, price, availableSizes, style, installments, isFreeShipping } = data
 
         // ------------CHECKING and VALIDATING every key to update the product details------------
         if (title)
@@ -154,8 +155,17 @@ const updateProduct = async (req, res) => {
             if (!isValid(description)) return res.status(400).send({ status: false, message: "description is invalid" })
         if (price)
             if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "price is invalid" })
-        if (availableSizes)
-            if (!isValidAvailableSizes(availableSizes)) return res.status(400).send({ status: false, message: `Size should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"]}` })
+        if (availableSizes) {
+            if (!isValid(availableSizes)) return res.status(400).send({ status: false, message: "availableSizes Should be Valid" })
+            availableSizes = availableSizes.split(",").map(x => x.trim())
+            if (availableSizes.map(x => isValidSize(x)).filter(x => x === false).length !== 0) return res.status(400).send({ status: false, message: "Size Should be Among  S,XS,M,X,L,XXL,XL" })
+        }
+        if (style)
+            if (!isValid(style)) return res.status(400).send({ status: false, message: "style is invalid" })
+        if (installments)
+            if (!isValid(installments)) return res.status(400).send({ status: false, message: "installments is invalid" })
+        if (isFreeShipping)
+            if (typeof isFreeShipping != "boolean") return res.status(400).send({ status: false, message: "isFreeShipping should be true or false only" })
         // ----------------------VALIDATION ends here----------------------
 
         // -------------------CHECKING uniqueness of title---------------

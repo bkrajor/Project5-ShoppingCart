@@ -2,9 +2,7 @@ const userModel = require('../models/userModel')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const { uploadFile } = require('../util/aws')
-const {
-    isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode
-} = require('../util/validator')
+const { isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode } = require('../util/validator')
 
 // ******************************************************CREATE USER************************************************************
 

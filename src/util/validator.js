@@ -35,9 +35,10 @@ const isValidPincode = (pincode) => {
     return /^[1-9]\d{5}$/.test(pincode)
 }
 
-const isValidAvailableSizes = (size) => {
-    return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(size) !== -1
-}
+const isValidSize = (Size) => {
+    let correctSize = ["S", "XS", "M", "X", "L", "XXL", "XL"]
+    return (correctSize.includes(Size))
+  }
 
 const isValidPrice = (price) => {
     return /^\d{0,8}[.]?\d{1,4}$/.test(price)
@@ -55,5 +56,5 @@ const isValidStatus = (status) => {
 
 module.exports = {
     isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName,
-    isValidPincode, isValidAvailableSizes, isValidPrice, isValidQuantity, isValidStatus
+    isValidPincode, isValidSize, isValidPrice, isValidQuantity, isValidStatus
 }
