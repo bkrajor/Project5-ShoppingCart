@@ -38,6 +38,7 @@ const isValidPincode = (pincode) => {
 const isValidAvailableSizes = (size) => {
     return ["S", "XS","M","X", "L","XXL", "XL"].indexOf(size) !== -1
 }
+
 const isValidPrice = (price) => {
     return /^\d{0,8}[.]?\d{1,4}$/.test(price)
 }

@@ -28,8 +28,8 @@ route.put('/users/:userId/cart', cartController.updateCart)
 route.get('/users/:userId/cart',  cartController.getCart)
 route.delete('/users/:userId/cart', cartController.deleteCart)
 
+// *********************************ORDER's APIs**********************************************
 
-// ----------------Order's APIs-------------------
 route.post('/users/:userId/orders', orderController.createOrder)
 route.put('/users/:userId/orders ', orderController.updateOrder)
 
