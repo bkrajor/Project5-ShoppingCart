@@ -56,35 +56,26 @@ const createOrder = async (req, res)=>{
 const updateOrder = async (req, res)=>{
     try {
         const userId = req.params.userId
-        let tokenId = req.userId
-        let Body = req.body
+        let data = req.body
         if (!(validate.isValidObjectId(userId))) {
             return res.status(400).send({ status: false, message: "userId is not valid" });;
         }
-        if (!(validate.isValidObjectId(tokenId))) {
-            return res.status(400).send({ status: false, message: "Token is not valid" });;
-        }
+      
         const user = await userModel.findOne({ _id: userId })
         if (!user) {
             return res.status(400).send({ status: false, message: `userId  is not Valid` });
         }
-        if (!(userId == tokenId)) {
-            return res.status(401).send({ status: false, message: "You Are Not Authorized To Perform This Task" });
-        }
-        let { orderId, status } = Body
+   
+        let { orderId, status } = data
 
-        if (!validate.isValidRequestBody(Body)) {
+        if (!validate.isValidBody(data)) {
             return res.status(400).send({ status: false, message: "Please provide The Data" });
         }
-        if (!validate.isValid(orderId)) {
-            return res.status(400).send({ status: false, message: "Please provide OrderId" });
-        }
+       
         if (!(validate.isValidObjectId(orderId))) {
             return res.status(400).send({ status: false, message: "orderId is not valid" });;
         }
-        if (!validate.isValid(status)) {
-            return res.status(400).send({ status: false, message: "Please provide status" });
-        }
+      
         if (!validate.isValidStatus(status)) {
             return res.status(400).send({ status: false, message: "Status should be among 'pending', 'cancelled', 'completed' " });
         }
