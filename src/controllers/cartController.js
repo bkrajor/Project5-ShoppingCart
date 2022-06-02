@@ -36,14 +36,14 @@ const createCart = async function (req, res) {
         }
 
         // -----------If cart is not present then creating new CART for user----------
-        const cartCreate = {
+        const cartDetails = {
             userId: userId,
             items: [productDetails],
             totalItems: 1,
             totalPrice: productPrice
         }
-        const cartCreated = await cartModel.create(cartCreate)
-        return res.status(201).send({ status: true, message: "cart created successfully", data: cartCreated })
+        const cartData = await cartModel.create(cartDetails)
+        return res.status(201).send({ status: true, message: "cart created successfully", data: cartData })
     }
     catch (err) {
         return res.status(500).send({ status: false, error: err.message })

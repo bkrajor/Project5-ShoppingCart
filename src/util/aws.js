@@ -10,7 +10,7 @@ aws.config.update({
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-let uploadFile = async (file) => {
+let uploadFile = async (file) => { 
     return new Promise(function (resolve, reject) {
         let s3 = new aws.S3({ apiVersion: '2006-03-01' })
 

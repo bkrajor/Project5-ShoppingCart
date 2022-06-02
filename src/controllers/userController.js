@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const { uploadFile } = require('../util/aws')
 const {
- isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode
+    isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, isValidPincode
 } = require('../util/validator')
 
 // ******************************************************CREATE USER************************************************************
@@ -19,7 +19,7 @@ const createUser = async (req, res) => {
         // ------------------------VALIDATION starts from here-------------------------
         if (!isValid(fname)) return res.status(400).send({ status: false, message: "first name is required" })
         if (!isValid(lname)) return res.status(400).send({ status: false, message: "last name is required" })
-        if (!isValid (email)) return res.status(400).send({ status: false, message: "email is required" })
+        if (!isValid(email)) return res.status(400).send({ status: false, message: "email is required" })
         if (!isValid(phone)) return res.status(400).send({ status: false, message: "phone number is required" })
         if (!isValid(password)) return res.status(400).send({ status: false, message: "password is required" })
         if (!isValid(address)) return res.status(400).send({ status: false, message: "address is required" })
@@ -151,27 +151,44 @@ const updateUser = async (req, res) => {
         }
         if (address) {
             if (!isValid(address)) return res.status(400).send({ status: false, message: "address is invalid" })
+            const userData = await userModel.findOne({ userId })
+            const { shipping, billing } = address
             if (shipping) {
                 if (!isValid(shipping)) return res.status(400).send({ status: false, message: "shipping address is invalid" })
-                if (shipping.street)
+
+                if (shipping.street) {
                     if (!isValid(shipping.street)) return res.status(400).send({ status: false, message: "street is invalid" })
-                if (shipping.city)
+                    userData.address.shipping.street = shipping.street
+                }
+                if (shipping.city) {
                     if (!isValidName(shipping.city)) return res.status(400).send({ status: false, message: "city is invalid" })
-                if (shipping.pincode)
+                    userData.address.shipping.city = shipping.city
+                }
+                if (shipping.pincode) {
                     if (!isValidPincode(shipping.pincode)) return res.status(400).send({ status: false, message: "pincode is invalid" })
+                    userData.address.shipping.pincode = shipping.pincode
+                }
             }
             if (billing) {
-                if (!isValid(billing)) return res.status(400).send({ status: false, message: "shipping address is invalid" })
-                if (billing.street)
+                if (!isValid(billing)) return res.status(400).send({ status: false, message: "billing address is invalid" })
+
+                if (billing.street) {
                     if (!isValid(billing.street)) return res.status(400).send({ status: false, message: "street is invalid" })
-                if (billing.city)
+                    userData.address.billing.street = billing.street
+                }
+                if (billing.city) {
                     if (!isValidName(billing.city)) return res.status(400).send({ status: false, message: "city is invalid" })
-                if (billing.pincode)
+                    userData.address.billing.city = billing.city
+                }
+                if (billing.pincode) {
                     if (!isValidPincode(billing.pincode)) return res.status(400).send({ status: false, message: "pincode is invalid" })
+                    userData.address.billing.pincode = billing.pincode
+                }
             }
+            data.address = userData.address
         }
-        // -----------------------------VALIDATING ends here-------------------------------------
-        
+        // -----------------------------VALIDATION ends here-------------------------------------
+
         // -------------------CHECKING uniqueness of email & phone-----------------------
         const isEmailExist = await userModel.findOne({ email })
         if (isEmailExist) return res.status(400).send({ status: false, message: "Email is already exist" })

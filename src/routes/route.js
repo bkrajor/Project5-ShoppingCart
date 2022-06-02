@@ -23,14 +23,14 @@ route.delete('/products/:productId', productController.deleteProduct)
 
 // *********************************CART's APIs**********************************************
 
-route.post('/users/:userId/cart',  cartController.createCart)
-route.put('/users/:userId/cart', cartController.updateCart)
-route.get('/users/:userId/cart',  cartController.getCart)
-route.delete('/users/:userId/cart', cartController.deleteCart)
+route.post('/users/:userId/cart', authentication, authorization, cartController.createCart)
+route.put('/users/:userId/cart', authentication, authorization, cartController.updateCart)
+route.get('/users/:userId/cart', authentication, cartController.getCart)
+route.delete('/users/:userId/cart', authentication, authorization, cartController.deleteCart)
 
 // *********************************ORDER's APIs**********************************************
 
-route.post('/users/:userId/orders', orderController.createOrder)
-route.put('/users/:userId/orders ', orderController.updateOrder)
+route.post('/users/:userId/orders', authentication, authorization, orderController.createOrder)
+route.put('/users/:userId/orders ', authentication, authorization, orderController.updateOrder)
 
 module.exports = route

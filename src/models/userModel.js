@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     lname: {
         type: String, required: true, trim: true
     },
-    email: {
+    email: { 
         type: String, required: true, unique: true, trim: true
     },
     profileImage: {

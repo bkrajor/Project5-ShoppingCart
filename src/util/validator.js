@@ -36,7 +36,7 @@ const isValidPincode = (pincode) => {
 }
 
 const isValidAvailableSizes = (size) => {
-    return ["S", "XS","M","X", "L","XXL", "XL"].indexOf(size) !== -1
+    return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(size) !== -1
 }
 
 const isValidPrice = (price) => {
@@ -49,11 +49,11 @@ const isValidQuantity = function isInteger(value) {
     if (value % 1 == 0) return true
 }
 
-const isValidStatus = function(status) {
+const isValidStatus = (status) => {
     return ['pending', 'cancelled', 'completed'].indexOf(status) !== -1
 }
 
-module.exports = { 
-    isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName, 
+module.exports = {
+    isValid, isValidBody, isValidObjectId, isValidEmail, isValidPhone, isValidPassword, isValidName,
     isValidPincode, isValidAvailableSizes, isValidPrice, isValidQuantity, isValidStatus
 }
