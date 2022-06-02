@@ -17,13 +17,12 @@ const createProduct = async (req, res) => {
         const currencyFormat = '₹'
 
         // ------------------------VALIDATION starts from here-------------------------
-        if (!title) return res.status(400).send({ status: false, message: "title is required" })
-        if (!description) return res.status(400).send({ status: false, message: "description is required" })
-        if (!price) return res.status(400).send({ status: false, message: "price is required" })
-        if (!availableSizes) return res.status(400).send({ status: false, message: "size is required at least one size should be given" })
+        if (!isValid(title)) return res.status(400).send({ status: false, message: "title is required" })
+        if (!isValid(description)) return res.status(400).send({ status: false, message: "description is required" })
+        if (!isValid(price)) return res.status(400).send({ status: false, message: "price is required" })
+        if (!isValid(availableSizes)) return res.status(400).send({ status: false, message: "size is required at least one size should be given" })
 
         if (!isValidName(title)) return res.status(400).send({ status: false, message: "title is invalid" })
-        if (!isValid(description)) return res.status(400).send({ status: false, message: "description is invalid" })
         if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "price is invalid" })
         // ------------------------VALIDATION ends here-------------------------
 

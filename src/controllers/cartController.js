@@ -1,7 +1,7 @@
 const cartModel = require('../models/cartModel')
 const productModel = require('../models/productModel')
 const userModel = require('../models/userModel')
-const { isValidObjectId } = require('../util/validator')
+const { isValidObjectId, isValid } = require('../util/validator')
 
 // *********************************************CREATE CART**************************************************** 
 
@@ -13,7 +13,7 @@ const createCart = async function (req, res) {
         let productDetails = { productId, quantity: 1 }
 
         // ----------------VALIDATING productId and then CHECKING product in DB----------------  
-        if (!productId) return res.status(400).send({ status: false, message: "productId is required" })
+        if (!isValid(productId)) return res.status(400).send({ status: false, message: "productId is required" })
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "invalid product Id.." })
         const product = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!product) return res.status(400).send({ status: false, message: "product not found or may be deleted..." })
@@ -21,10 +21,10 @@ const createCart = async function (req, res) {
         const productPrice = product.price
 
         // -------------CHECKING cart is already present for  user or not------------
-        const isAlreadyCart = await cartModel.findOne({ userId: userId })
+        const isCartExist = await cartModel.findOne({ userId: userId })
 
-        if (isAlreadyCart) {
-            let alreadyProductsId = isAlreadyCart.items.map(x => x.productId.toString())
+        if (isCartExist) {
+            let alreadyProductsId = isCartExist.items.map(x => x.productId.toString())
             if (alreadyProductsId.includes(productId)) {
                 let updatedCart = await cartModel.findOneAndUpdate({ "items.productId": productId, userId: userId }, { $inc: { "items.$.quantity": 1, totalPrice: productPrice } }, { new: true })
                 return res.status(200).send({ status: true, message: "items added successfully", data: updatedCart })
@@ -60,9 +60,9 @@ const updateCart = async function (req, res) {
         const { cartId, productId, removeProduct } = req.body
 
         // ------------------------VALIDATION starts from here-------------------------
-        if (!cartId) return res.status(400).send({ status: false, message: "Provide cartId " })
-        if (!productId) return res.status(400).send({ status: false, message: "Provide productId " })
-        if (!removeProduct) return res.status(400).send({ status: false, message: "Provide removeProduct field" })
+        if (!isValid(cartId)) return res.status(400).send({ status: false, message: "Provide cartId " })
+        if (!isValid(productId)) return res.status(400).send({ status: false, message: "Provide productId " })
+        if (!isValid(removeProduct)) return res.status(400).send({ status: false, message: "Provide removeProduct field" })
 
         if (!isValidObjectId(cartId)) return res.status(400).send({ status: false, message: "invalid cart Id.." })
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "invalid product Id.." })
@@ -77,29 +77,29 @@ const updateCart = async function (req, res) {
         if (!findProduct) return res.status(404).send({ status: false, message: "product details not found or may be deleted" })
 
         // -------------CHECKING cartData with particular productId------------
-        const cartData = await cartModel.findOne({ $or: [{ "items.productId": productId, userId: userId }, { "items.productId": productId, _id: cartId }] })
+        const cartData = await cartModel.findOne({ "items.productId": productId, _id: cartId })
         if (!cartData) return res.status(404).send({ status: false, message: "This Product not present in the following Cart" })
 
         // -------------ASSIGNING price and quantity fot the product-----------
         const reducePrice = findProduct.price
-        const quantity = cart.items.filter(x => x.productId.toString() === productId)[0].quantity
+        const quantity = cartData.items.filter(x => x.productId.toString() === productId)[0].quantity    
 
         if (removeProduct != 0 && removeProduct != 1) return res.status(400).send({ status: false, message: "remove Product should contain 0 and 1 only.." })
 
         if (removeProduct == 0) {
-            const deleteProduct = await cartModel.findOneAndUpdate({ "items.productId": productId, userId: userId },
+            const deleteProduct = await cartModel.findOneAndUpdate({ "items.productId": productId, cartId: cartId },
                 { $pull: { items: { productId: productId } }, $inc: { totalItems: -1, totalPrice: -reducePrice * quantity } }, { new: true })
             return res.status(200).send({ status: true, messsage: "item removed successfully", data: deleteProduct })
         }
         if (removeProduct == 1) {
             if (quantity > 1) {
-                let reduceProduct = await cartModel.findOneAndUpdate({ "items.productId": productId, userId: userId },
+                let reduceProduct = await cartModel.findOneAndUpdate({ "items.productId": productId, cartId: cartId },
                     { $inc: { "items.$.quantity": -1, totalPrice: -reducePrice } }, { new: true })
                 // { $inc: { items:{quantity: -1}, totalPrice: -reducePrice } }, { new: true })
                 return res.status(200).send({ status: true, messsage: "product removed successfully", data: reduceProduct })
             }
             else {
-                const deleteProduct = await cartModel.findOneAndUpdate({ "items.productId": productId, userId: userId },
+                const deleteProduct = await cartModel.findOneAndUpdate({ "items.productId": productId, cartId: cartId },
                     { $pull: { items: { productId: productId } }, $inc: { totalItems: -1, totalPrice: -reducePrice * quantity } }, { new: true })
                 return res.status(200).send({ status: true, messsage: "item removed successfully", data: deleteProduct })
             }

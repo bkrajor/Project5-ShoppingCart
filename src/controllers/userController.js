@@ -15,40 +15,37 @@ const createUser = async (req, res) => {
 
         // ---------------DESTRUCTURING requestBody---------------------
         const { fname, lname, email, phone, password, address } = data
-        const { shipping, billing } = address
 
         // ------------------------VALIDATION starts from here-------------------------
-        if (!fname) return res.status(400).send({ status: false, message: "first name is required" })
-        if (!lname) return res.status(400).send({ status: false, message: "last name is required" })
-        if (!email) return res.status(400).send({ status: false, message: "email is required" })
-        if (!phone) return res.status(400).send({ status: false, message: "phone number is required" })
-        if (!password) return res.status(400).send({ status: false, message: "password is required" })
-        if (!address) return res.status(400).send({ status: false, message: "address is required" })
+        if (!isValid(fname)) return res.status(400).send({ status: false, message: "first name is required" })
+        if (!isValid(lname)) return res.status(400).send({ status: false, message: "last name is required" })
+        if (!isValid (email)) return res.status(400).send({ status: false, message: "email is required" })
+        if (!isValid(phone)) return res.status(400).send({ status: false, message: "phone number is required" })
+        if (!isValid(password)) return res.status(400).send({ status: false, message: "password is required" })
+        if (!isValid(address)) return res.status(400).send({ status: false, message: "address is required" })
 
-        if (!shipping) return res.status(400).send({ status: false, message: "shipping address is required" })
-        if (!shipping.street) return res.status(400).send({ status: false, message: "street is required" })
-        if (!shipping.city) return res.status(400).send({ status: false, message: "city is required" })
-        if (!shipping.pincode) return res.status(400).send({ status: false, message: "pincode is required" })
+        // ---------------DESTRUCTURING address---------------------
+        const { shipping, billing } = address
 
-        if (!billing) return res.status(400).send({ status: false, message: "billing address is required" })
-        if (!billing.street) return res.status(400).send({ status: false, message: "street is required" })
-        if (!billing.city) return res.status(400).send({ status: false, message: "city is required" })
-        if (!billing.pincode) return res.status(400).send({ status: false, message: "pincode is required" })
+        if (!isValid(shipping)) return res.status(400).send({ status: false, message: "shipping address is required" })
+        if (!isValid(shipping.street)) return res.status(400).send({ status: false, message: "street is required" })
+        if (!isValid(shipping.city)) return res.status(400).send({ status: false, message: "city is required" })
+        if (!isValid(shipping.pincode)) return res.status(400).send({ status: false, message: "pincode is required" })
+
+        if (!isValid(billing)) return res.status(400).send({ status: false, message: "billing address is required" })
+        if (!isValid(billing.street)) return res.status(400).send({ status: false, message: "street is required" })
+        if (!isValid(billing.city)) return res.status(400).send({ status: false, message: "city is required" })
+        if (!isValid(billing.pincode)) return res.status(400).send({ status: false, message: "pincode is required" })
 
         if (!isValidName(fname)) return res.status(400).send({ status: false, message: "first name is invalid" })
         if (!isValidName(lname)) return res.status(400).send({ status: false, message: "last name is invalid" })
         if (!isValidEmail(email)) return res.status(400).send({ status: false, message: "email is invalid" })
         if (!isValidPhone(phone)) return res.status(400).send({ status: false, message: "phone number is invalid" })
         if (!isValidPassword(password)) return res.status(400).send({ status: false, message: "password is invalid" })
-        if (!isValid(address)) return res.status(400).send({ status: false, message: "address is invalid" })
 
-        if (!isValid(shipping)) return res.status(400).send({ status: false, message: "shipping address is invalid" })
-        if (!isValid(shipping.street)) return res.status(400).send({ status: false, message: "street is invalid" })
         if (!isValidName(shipping.city)) return res.status(400).send({ status: false, message: "city is invalid" })
         if (!isValidPincode(shipping.pincode)) return res.status(400).send({ status: false, message: "pincode is invalid" })
 
-        if (!isValid(billing)) return res.status(400).send({ status: false, message: "shipping address is invalid" })
-        if (!isValid(billing.street)) return res.status(400).send({ status: false, message: "street is invalid" })
         if (!isValidName(billing.city)) return res.status(400).send({ status: false, message: "city is invalid" })
         if (!isValidPincode(billing.pincode)) return res.status(400).send({ status: false, message: "pincode is invalid" })
         // --------------------------VALIDATION ends here----------------------------------
@@ -89,8 +86,8 @@ const userlogin = async (req, res) => {
         let { email, password } = data
 
         // ------------------------VALIDATION starts from here-------------------------
-        if (!email) return res.status(400).send({ status: false, message: "Provide the email" })
-        if (!password) return res.status(400).send({ status: false, message: "provide the password" })
+        if (!isValid(email)) return res.status(400).send({ status: false, message: "Provide the email" })
+        if (!isValid(password)) return res.status(400).send({ status: false, message: "provide the password" })
 
         if (!isValidEmail(email)) return res.status(400).send({ status: false, message: "email is invalid" })
         if (!isValidPassword(password)) return res.status(400).send({ status: false, message: "password is invalid" })
@@ -100,7 +97,7 @@ const userlogin = async (req, res) => {
         if (!user) return res.status(404).send({ status: false, message: "User is not found with this email" })
 
         // ----------COMPARING encrypted password with user's entered password---------
-        if (!(bcrypt.compare(data.password, user.password))) return res.status(401).send({ status: false, message: "login failed! password is incorrect" })
+        if (!(bcrypt.compare(password, user.password))) return res.status(401).send({ status: false, message: "login failed! password is incorrect" })
 
         const token = jwt.sign({ userId: user._id }, "Uranium Project-5", { expiresIn: "24h" });
 
