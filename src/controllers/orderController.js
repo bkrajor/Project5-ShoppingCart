@@ -1,7 +1,7 @@
 const orderModel = require("../models/orderModel")
 const cartModel = require('../models/cartModel')
 const userModel = require('../models/userModel')
-const { isValidObjectId} = require('../util/validator')
+const { isValidObjectId} = require('../utils/validation')
 
 //***************************************************************CREATE ORDER****************************************************************************************
 
@@ -58,7 +58,8 @@ const updateOrder = async function (req, res) {
         if (!status) return res.status(400).send({ status: false, message: "Provide Order Status" })
         if (!isValidStatus(status)) return res.status(400).send({ status: false, message: "status should be among 'pending','completed' and 'canceled' only" })
 
-        if (status == 'cancelled' && searchOrder.cancellable !== true) return res.status(400).send({ status: false, message: "You can not cancel the order" })
+
+        if (status == 'cancled' && searchOrder.cancellable !== true) return res.status(400).send({ status: false, message: "You can not cancel the order" })
 
         const orderUpdated = await orderModel.findOneAndUpdate({ _id: orderId }, { status: status }, { new: true })
         return res.status(200).send({ status: true, message: "Order status updated successfully", data: orderUpdated })
@@ -68,6 +69,7 @@ const updateOrder = async function (req, res) {
         return res.status(500).send({ status: false, error: err.message })
     }
 }
+
 
 
 module.exports = { createOrder, updateOrder }
