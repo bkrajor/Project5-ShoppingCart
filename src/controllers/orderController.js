@@ -9,8 +9,6 @@ const createOrder = async function (req, res) {
     try {
         const userId = req.params.userId
         const data = req.body
-        if (!isValidBody(data)) return res.status(400).send({ status: false, message: "Invalid Parameters" })
-
         const { cancellable } = data
 
         // -------------CHECKING cart is already present for user or not------------
@@ -19,8 +17,8 @@ const createOrder = async function (req, res) {
         if (cartData.items.length == 0) return res.status(404).send({ status: false, message: "Cart is empty... First add Product to Cart." })
 
         // ----------------VALIDATING cancellable key-------------------
-        if (!isValid(cancellable)) return res.status(400).send({ status: false, message: "Provide cancellable Field" })
-        if (typeof cancellable != "boolean") return res.status(400).send({ status: false, message: "cancellable should be true or false only" })
+        if (cancellable)
+            if (cancellable != "true" && cancellable != "false") return res.status(400).send({ status: false, message: "cancellable should be true or false only" })
 
         // ------------ADDING totalQuantity & cancellable key to cart object---------
         cartData.totalQuantity = cartData.items.map(x => x.quantity).reduce((x, y) => x + y)
