@@ -12,9 +12,11 @@ const authentication = async function (req, res, next) {
 
         const newToken = token.split(' ');
         const finalToken = newToken[1];
-        let decodedToken = jwt.verify(finalToken, "Uranium Project-5")
-        if (!decodedToken)
-            return res.status(401).send({ status: false, msg: "please enter the right token" })
+        let decodedToken = jwt.verify(finalToken, "Uranium Project-5",{ignoreExpiration:true})
+        if (!decodedToken) return res.status(401).send({ status: false, msg: "please enter the right token" })
+
+        if (Date.now() > decodedToken.exp*1000)
+            return res.status(400).send({message:"Session Expired"})
 
         req.userId = decodedToken.userId
         next()
