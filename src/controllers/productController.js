@@ -146,7 +146,7 @@ const updateProduct = async (req, res) => {
         if (!findProduct) return res.status(404).send({ status: false, message: "No Product exist" })
 
         // ---------------DESTRUCTURING requestBody---------------------
-        const { title, description, price, availableSizes, style, installments, isFreeShipping } = data
+        let { title, description, price, availableSizes, style, installments, isFreeShipping } = data
 
         // ------------CHECKING and VALIDATING every key to update the product details------------
         if (title)
