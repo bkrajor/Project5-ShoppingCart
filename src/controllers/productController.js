@@ -34,7 +34,7 @@ const createProduct = async (req, res) => {
         if (!availableSizes) return res.status(400).send({ status: false, message: "availableSizes is mandatory" })
         availableSizes = availableSizes.split(",").map(x => x.trim())
         if (availableSizes.map(x => isValidSize(x)).filter(x => x === false).length !== 0) return res.status(400).send({ status: false, message: "Size Should be Among  S,XS,M,X,L,XXL,XL" })
-        requestBody.availableSizes = availableSizes
+        data.availableSizes = availableSizes
 
         // -------------------CHECKING uniqueness of title-----------------------
         const isTitleExist = await productModel.findOne({ title })
