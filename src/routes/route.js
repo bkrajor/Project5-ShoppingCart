@@ -10,7 +10,7 @@ const { authentication, authorization } = require('../util/auth')
 
 route.post('/register', userController.createUser)
 route.post('/login', userController.userlogin)
-route.get('/user/:userId/profile', authentication, userController.getUser)
+route.get('/user/:userId/profile', authentication, authorization, userController.getUser)
 route.put('/user/:userId/profile', authentication, authorization, userController.updateUser)
 
 // *******************************PRODUCT's APIs********************************************
@@ -25,7 +25,7 @@ route.delete('/products/:productId', productController.deleteProduct)
 
 route.post('/users/:userId/cart', authentication, authorization, cartController.createCart)
 route.put('/users/:userId/cart', authentication, authorization, cartController.updateCart)
-route.get('/users/:userId/cart', authentication, cartController.getCart)
+route.get('/users/:userId/cart', authentication, authorization, cartController.getCart)
 route.delete('/users/:userId/cart', authentication, authorization, cartController.deleteCart)
 
 // *********************************ORDER's APIs**********************************************

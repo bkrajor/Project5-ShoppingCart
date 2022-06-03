@@ -95,7 +95,8 @@ const userlogin = async (req, res) => {
         if (!user) return res.status(404).send({ status: false, message: "User is not found with this email" })
 
         // ----------COMPARING encrypted password with user's entered password---------
-        if (!(bcrypt.compare(password, user.password))) return res.status(401).send({ status: false, message: "login failed! password is incorrect" })
+        const decryptedPass =await bcrypt.compare(password, user.password)
+        if (!decryptedPass) return res.status(401).send({ status: false, message: "login failed! password is incorrect" })
 
         const token = jwt.sign({ userId: user._id }, "Uranium Project-5", { expiresIn: "24h" });
 
