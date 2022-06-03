@@ -90,7 +90,6 @@ const getProductByQuery = async (req, res) => {
             filterQuery['price'] = { $lte: priceLessThan }
         }
         if (priceSort) {
-            console.log
             if (priceSort != 1 && priceSort != -1)
                 return res.status(400).send({ status: false, message: "Please provide only 1 for ascending or -1 for descending" })
             if (priceSort == 1) {
