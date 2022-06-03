@@ -45,7 +45,7 @@ const isValidPrice = (price) => {
 }
 
 const isValidQuantity = function isInteger(value) {
-    if (value <= 1) return false
+    if (value < 1) return false
     if (isNaN(Number(value))) return false
     if (value % 1 == 0) return true
 }
