@@ -10,7 +10,7 @@ const createProduct = async (req, res) => {
         if (!isValidBody(data)) return res.status(400).send({ status: false, message: "Invalid Parameters" })
 
         // ---------------DESTRUCTURING requestBody---------------------
-        const { title, description, price, availableSizes, style, installments, isFreeShipping } = data
+        let { title, description, price, availableSizes, style, installments, isFreeShipping } = data
         const currencyId = 'INR'
         const currencyFormat = '₹'
 
