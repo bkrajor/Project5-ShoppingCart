@@ -31,6 +31,6 @@ route.delete('/users/:userId/cart', authentication, authorization, cartControlle
 // *********************************ORDER's APIs**********************************************
 
 route.post('/users/:userId/orders', authentication, authorization, orderController.createOrder)
-route.put('/users/:userId/orders ', authentication, authorization, orderController.updateOrder)
+route.put('/users/:userId/orders', authentication, authorization, orderController.updateOrder)
 
 module.exports = route
